@@ -50,9 +50,9 @@ class Order(Base):
     user_id = Column("user_id", Integer, ForeignKey("users.id"), nullable=False)
     price = Column("price", Float, nullable=False)
 
-    def __init__(self, status, user, price):
+    def __init__(self, user_id, status="pending", price=0):
         self.status = status
-        self.user = user
+        self.user_id = user_id
         self.price = price
 
 
@@ -85,6 +85,6 @@ class OrderItem(Base):
 # deletar version e .db
 # executa novamente alembic revision --autogenerate -m "Initial Migration"
 
-# sempre quando houver alteraçao do banco, é necessario migrar: 
+# sempre quando houver alteraçao do banco, é necessario migrar:
 # alembic revision --autogenerate -m "remove admin"
 # alembic upgrade head
