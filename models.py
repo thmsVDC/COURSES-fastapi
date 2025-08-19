@@ -8,16 +8,15 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.orm import declarative_base
-from sqlalchemy_utils import ChoiceType
 
-# databse connection
+# Conexão com o banco de dados SQLite
 db = create_engine("sqlite:///database.db")
 
-# Base class for declarative models
+# Cria a base do banco de dados
 Base = declarative_base()
 
 
-# Create the User model
+# Tabela para os usuários
 class User(Base):
     __tablename__ = "users"
 
@@ -35,17 +34,19 @@ class User(Base):
         self.active = active
         self.admin = admin
 
+
+# Tabela para os pedidos
 class Order(Base):
     __tablename__ = "orders"
 
-    STATUS_ORDER = [
-        ("pending", "Pending"),
-        ("completed", "Completed"),
-        ("cancelled", "Cancelled"),
-    ]
+    # STATUS_ORDER = [
+    #     ("pending", "Pending"),
+    #     ("completed", "Completed"),
+    #     ("cancelled", "Cancelled"),
+    # ]
 
-    id = Column("id", Integer, primary_key=True, autoincrement=True) 
-    status = Column("status", ChoiceType(STATUS_ORDER), default="pending")
+    id = Column("id", Integer, primary_key=True, autoincrement=True)
+    status = Column("status", String, default="pending")
     user_id = Column("user_id", Integer, ForeignKey("users.id"), nullable=False)
     price = Column("price", Float, nullable=False)
 
@@ -54,6 +55,8 @@ class Order(Base):
         self.user = user
         self.price = price
 
+
+# Tabela para os itens do pedido
 class OrderItem(Base):
     __tablename__ = "order_items"
 
@@ -64,7 +67,24 @@ class OrderItem(Base):
     unitary_price = Column("unitary_price", Float, nullable=False)
     order_id = Column("order_id", Integer, ForeignKey("orders.id"), nullable=False)
 
-    def __init__(self, order_id, product_name, quantity):
+    def __init__(self, order_id, quantity, flavor, size, unitary_price):
         self.order_id = order_id
-        self.product_name = product_name
         self.quantity = quantity
+        self.flavor = flavor
+        self.size = size
+        self.unitary_price = unitary_price
+
+
+# alembic init alembic
+# alterar env.py
+# alterar alembic.ini
+# alembic revision --autogenerate -m "Initial Migration"
+# alembic upgrade head
+
+# se deu erro
+# deletar version e .db
+# executa novamente alembic revision --autogenerate -m "Initial Migration"
+
+# sempre quando houver alteraçao do banco, é necessario migrar: 
+# alembic revision --autogenerate -m "remove admin"
+# alembic upgrade head
